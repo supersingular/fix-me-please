@@ -23,7 +23,8 @@ gemfile(true) do
   gem 'rspec-rails'
   gem 'sqlite3', '~> 1.4'
   gem 'database_cleaner'
-end
+  gem 'byebug' # NEW
+end 
 
 require 'active_record'
 require 'rspec-rails'
@@ -83,7 +84,11 @@ class TestApp < Rails::Application
   Rails.logger  = config.logger
 
   routes.draw do
-    get '/' => 'comments#users_comments'
+     # OLD👇
+    # get '/' => 'comments#users_comments'
+
+    # NEW👇
+    root to: 'comments#users_comments'
   end
 end
 
