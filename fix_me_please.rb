@@ -84,7 +84,7 @@ class TestApp < Rails::Application
   Rails.logger  = config.logger
 
   routes.draw do
-     # OLD👇
+     # OLD👇git st
     # get '/' => 'comments#users_comments'
 
     # NEW👇
