@@ -68,6 +68,7 @@ end
 class Comment < ActiveRecord::Base
   belongs_to :post
   belongs_to :author
+
 end
 
 class Author < ActiveRecord::Base
@@ -132,19 +133,37 @@ require 'rspec/rails'
 
 RSpec.describe CommentsController, type: :controller do
   describe 'GET #user_comments' do
-    before do
-      @author_1 = Author.create(username: 'Clara')
-      @author_2 = Author.create(username: 'Michmich')
-      @author_3 = Author.create(username: 'Pich')
-      @post_1 = Post.create
-      @post_2 = Post.create
-      @comment_1 = Comment.create(author: @author_1, post: @post_1)
-      @comment_2 = Comment.create(author: @author_2, post: @post_1, created_at: 1.month.ago)
-      @comment_3 = Comment.create(author: @author_1, post: @post_2)
-      @comment_4 = Comment.create(author: @author_2, post: @post_2, created_at: 2.month.ago)
-      @comment_5 = Comment.create(author: @author_3, post: @post_2)
-      @comment_6 = Comment.create(author: @author_1)
-    end
+    # before do
+       # OLD👇 
+      # @author_1 = Author.create(username: 'Clara')
+      # @author_2 = Author.create(username: 'Michmich')
+      # @author_3 = Author.create(username: 'Pich')
+      # @post_1 = Post.create
+      # @post_2 = Post.create
+      # @comment_1 = Comment.create(author: @author_1, post: @post_1)
+      # @comment_2 = Comment.create(author: @author_2, post: @post_1, created_at: 1.month.ago)
+      # @comment_3 = Comment.create(author: @author_1, post: @post_2)
+      # @comment_4 = Comment.create(author: @author_2, post: @post_2, created_at: 2.month.ago)
+      # @comment_5 = Comment.create(author: @author_3, post: @post_2)
+      # @comment_6 = Comment.create(author: @author_1)
+
+      # NEW👇 reason why i used let/let! to declare instance variables:
+      #-It is memoized when used multiple times in one example, but not across examples.
+      # -variables with let are lazy-loaded, so you wont waste time initializing the variable for examples that don’t reference it, but the ones using let! the obbject is instantly created
+      # -Will raise an exception if you have a typo in your variable name.
+      let(:author_1) { Author.create(username: 'Clara') }
+      let(:author_2) { Author.create(username: 'Michmich') }
+      let(:author_3) { Author.create(username: 'Pich') }
+      let(:post_1) { Post.create }
+      let(:post_2) { Post.create }
+      let(:post_3) { Post.create }
+      let!(:comment_1) { Comment.create(author: author_1, post: post_1) }
+      let!(:comment_2) { Comment.create(author: author_2, post: post_1, created_at: 1.month.ago) }
+      let!(:comment_3) { Comment.create(author: author_1, post: post_2) }
+      let!(:comment_4) { Comment.create(author: author_2, post: post_2, created_at: 2.month.ago) }
+      let!(:comment_5) { Comment.create(author: author_3, post: post_2) }
+      let!(:comment_6) { Comment.create(author: author_3, post: post_3) }
+    
 
     context 'no username param' do
       it 'returns an empty array' do
@@ -160,11 +179,11 @@ RSpec.describe CommentsController, type: :controller do
         # get :users_comments, format: :json, params: { username: @author_1.username }
 
          #NEW👇 allowing more then one username on query string params
-        get :users_comments, format: :json, params: { usernames: [ @author_1.username ] } 
+        get :users_comments, format: :json, params: { usernames: [ author_1.username ] } 
 
         expect(JSON.parse(response.body)).to match_array [
-            a_hash_including("id" => @comment_1.id),
-            a_hash_including("id" => @comment_3.id)
+            a_hash_including("id" => comment_1.id),
+            a_hash_including("id" => comment_3.id)
           ]
       end
     end
@@ -175,10 +194,10 @@ RSpec.describe CommentsController, type: :controller do
         # get :users_comments, format: :json, params: { username: @author_2.username, sort_by_date: 'true' }
 
          #NEW👇 allowing more then one username on query string params
-        get :users_comments, format: :json, params: { usernames: [ @author_2.username ], sort_by_date: 'true' } 
+        get :users_comments, format: :json, params: { usernames: [ author_2.username ], sort_by_date: 'true' } 
 
 
-        expect(JSON.parse(response.body).pluck('id')).to eq([@comment_4.id, @comment_2.id])
+        expect(JSON.parse(response.body).pluck('id')).to eq([comment_4.id, comment_2.id])
       end
     end
 
@@ -188,13 +207,13 @@ RSpec.describe CommentsController, type: :controller do
         # get :users_comments, format: :json, params: { username: @author_1.username }
 
         #NEW👇 added possibility for qyery string params to take more then one param and also added author_2 username to the teste
-        get :users_comments, format: :json, params: { usernames: [@author_1.username, @author_2.username] } 
+        get :users_comments, format: :json, params: { usernames: [author_1.username, author_2.username] } 
 
         expect(JSON.parse(response.body)).to match_array [
-            a_hash_including("id" => @comment_1.id),
-            a_hash_including("id" => @comment_2.id),
-            a_hash_including("id" => @comment_3.id),
-            a_hash_including("id" => @comment_4.id)
+            a_hash_including("id" => comment_1.id),
+            a_hash_including("id" => comment_2.id),
+            a_hash_including("id" => comment_3.id),
+            a_hash_including("id" => comment_4.id)
           ]
       end
     end
