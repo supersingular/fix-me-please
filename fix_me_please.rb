@@ -84,10 +84,10 @@ class TestApp < Rails::Application
   Rails.logger  = config.logger
 
   routes.draw do
-     # OLD👇
+     # OLD👇 
     # get '/' => 'comments#users_comments'
 
-    # NEW👇
+    # NEW👇 Used Rails convention to set root path
     root to: 'comments#users_comments'
   end
 end
