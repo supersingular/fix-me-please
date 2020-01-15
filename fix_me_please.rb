@@ -51,7 +51,11 @@ ActiveRecord::Schema.define do
   end
 
   create_table :comments, force: true do |t|
-    t.integer :post_id
+     # OLD👇 
+    # t.integer :post_id, null: false
+
+    # NEW👇 comment cant be saved to database without a post
+    t.integer :post_id, null: false
     t.integer :author_id, null: false
     t.timestamps
   end
