@@ -156,7 +156,11 @@ RSpec.describe CommentsController, type: :controller do
 
     context 'username param' do
       it 'returns two comments for author_1' do
-        get :users_comments, format: :json, params: { username: @author_1.username }
+        # OLD👇 
+        # get :users_comments, format: :json, params: { username: @author_1.username }
+
+         #NEW👇 allowing more then one username on query string params
+        get :users_comments, format: :json, params: { usernames: [ @author_1.username ] } 
 
         expect(JSON.parse(response.body)).to match_array [
             a_hash_including("id" => @comment_1.id),
@@ -167,7 +171,12 @@ RSpec.describe CommentsController, type: :controller do
 
     context 'sort_by_date param' do
       it 'returns two comments for author_2 order inverted' do
-        get :users_comments, format: :json, params: { username: @author_2.username, sort_by_date: 'true' }
+        # OLD👇 
+        # get :users_comments, format: :json, params: { username: @author_2.username, sort_by_date: 'true' }
+
+         #NEW👇 allowing more then one username on query string params
+        get :users_comments, format: :json, params: { usernames: [ @author_2.username ], sort_by_date: 'true' } 
+
 
         expect(JSON.parse(response.body).pluck('id')).to eq([@comment_4.id, @comment_2.id])
       end
@@ -175,7 +184,11 @@ RSpec.describe CommentsController, type: :controller do
 
     context 'multiple username param' do
       it 'returns four comments for author_1 and author_2' do
-        get :users_comments, format: :json, params: { username: @author_1.username }
+         # OLD👇 
+        # get :users_comments, format: :json, params: { username: @author_1.username }
+
+        #NEW👇 added possibility for qyery string params to take more then one param and also added author_2 username to the teste
+        get :users_comments, format: :json, params: { usernames: [@author_1.username, @author_2.username] } 
 
         expect(JSON.parse(response.body)).to match_array [
             a_hash_including("id" => @comment_1.id),
