@@ -62,7 +62,11 @@ ActiveRecord::Schema.define do
 end
 
 class Post < ActiveRecord::Base
-  has_many :comments
+  # OLD👇 
+  # has_many :comments
+
+  # NEW👇 when a `Post` is destroyed, its `comments` will also be destroyed
+   has_many :comments
 end
 
 class Comment < ActiveRecord::Base
