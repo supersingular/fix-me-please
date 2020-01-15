@@ -96,24 +96,33 @@ class CommentsController < ActionController::Base
   include Rails.application.routes.url_helpers
 
   def users_comments
-    posts = Post.all
-    comments = posts.map(&:comments).flatten
-    comments = comments.sort_by(&:created_at) if options[:sort_by_date]
-    @user_comments = comments.select do |comment|
-      comment.author.username == options[:username]
-    end
+    # OLD👇 Should use Active Record
+    # posts = Post.all
+    # comments = posts.map(&:comments).flatten
+    # comments = comments.sort_by(&:created_at) if options[:sort_by_date]
+    # @user_comments = comments.select do |comment|
+    #   comment.author.username == options[:username]
+    # end
+    # render json: @user_comments
+
+    @user_comments = Comment.joins(:post, :author).where(authors: { username: options[:usernames]})
+    @user_comments = @user_comments.order(:created_at) if options[:sort_by_date]
     render json: @user_comments
   end
 
   private
 
   def options
-    options = {}
-    available_option_keys = [:username, :sort_by_date]
-    all_keys = params.keys.map(&:to_sym)
-    set_option_keys = all_keys & available_option_keys
-    set_option_keys.each { |key| options[key] = params[key] }
-    options
+    # OLD👇 
+    # options = {}
+    # available_option_keys = [:username, :sort_by_date]
+    # all_keys = params.keys.map(&:to_sym)
+    # set_option_keys = all_keys & available_option_keys
+    # set_option_keys.each { |key| options[key] = params[key] }
+    # options
+
+    # NEW👇
+    params.permit(:sort_by_date, usernames: []) # only these are the allowed params
   end
 end
 
