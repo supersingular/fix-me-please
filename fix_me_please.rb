@@ -66,7 +66,7 @@ class Post < ActiveRecord::Base
   # has_many :comments
 
   # NEW👇 when a `Post` is destroyed, its `comments` will also be destroyed
-   has_many :comments
+   has_many :comments, dependent: :destroy
 end
 
 class Comment < ActiveRecord::Base
