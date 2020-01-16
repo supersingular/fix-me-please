@@ -114,8 +114,8 @@ class CommentsController < ActionController::Base
     # end
     # render json: @user_comments
 
+    # NEW👇 Used Active Record to joint and query 3 tables at once, making one single request to the database
     @user_comments = Comment.joins(:post, :author).where('authors.username in(?)', options[:usernames]) 
-    # byebug
     @user_comments = @user_comments.order(:created_at) if options[:sort_by_date]
     render json: @user_comments
   end
