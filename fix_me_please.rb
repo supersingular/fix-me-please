@@ -52,10 +52,11 @@ ActiveRecord::Schema.define do
 
   create_table :comments, force: true do |t|
      # OLD👇 
-    # t.integer :post_id, null: false
+    # t.integer :post_id
 
     # NEW👇 comment cant be saved to database without a post
     t.integer :post_id, null: false
+
     t.integer :author_id, null: false
     t.timestamps
   end
@@ -158,8 +159,9 @@ RSpec.describe CommentsController, type: :controller do
 
       # NEW👇 reason why i used let/let! to declare instance variables:
       #-It is memoized when used multiple times in one example, but not across examples.
-      # -variables with let are lazy-loaded, so you wont waste time initializing the variable for examples that don’t reference it, but the ones using let! the obbject is instantly created
+      # -variables with let are lazy-loaded, so you wont waste time initializing the variable for examples that don’t reference it, but the ones using let! the object is instantly created
       # -Will raise an exception if you have a typo in your variable name.
+      # Added Post_3 to avoid rollback when creating comment_6, since we forced Comment model that a post_id must exist to create a comment
       let(:author_1) { Author.create(username: 'Clara') }
       let(:author_2) { Author.create(username: 'Michmich') }
       let(:author_3) { Author.create(username: 'Pich') }
