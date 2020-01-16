@@ -131,8 +131,8 @@ class CommentsController < ActionController::Base
     # set_option_keys.each { |key| options[key] = params[key] }
     # options
 
-    # NEW👇
-    params.permit(:sort_by_date, usernames: []) # only these are the allowed params
+    # NEW👇 Used rails built in methods to permit the params
+    params.permit(:sort_by_date, usernames: []) 
   end
 end
 
