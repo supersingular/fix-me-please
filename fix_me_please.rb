@@ -115,7 +115,6 @@ class CommentsController < ActionController::Base
     # render json: @user_comments
 
     @user_comments = Comment.joins(:author).where('authors.username in(?)', options[:usernames]) 
-    byebug
     @user_comments = @user_comments.order(:created_at) if options[:sort_by_date]
     render json: @user_comments
   end
